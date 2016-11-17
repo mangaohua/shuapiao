@@ -16,12 +16,13 @@ import Control.Concurrent(threadDelay)
 main :: IO ()
 main = do
   f <- openFile "/Users/mgh/imgs/codes.txt" WriteMode
-  replicateM_ 10 $ do
+  mapM_ (\i -> do
     r<- get "http://bus.kuaizhan.com/auth/api/sms/picvcode.jpg?1479376496872"
     let device_id = r ^. responseCookie "device_id" . cookieValue
         content = r ^. responseBody
-    L.writeFile (U8.toString (S.concat ["/Users/mgh/imgs/",device_id,".jpg"])) content
+    S.writeFile (U8.toString (S.concat ["/Users/mgh/imgs/",U8.fromString (show i),"_",device_id,".jpg"])) (L.toStrict content)
     hPutStrLn f (U8.toString (S.concat [device_id," "]))
+    hFlush f ) [1..10]
   hClose f
 
 sendRequest :: IO ()
