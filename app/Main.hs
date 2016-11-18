@@ -22,7 +22,7 @@ main = do
         content = r ^. responseBody
     S.writeFile (U8.toString (S.concat ["/Users/mgh/imgs/",U8.fromString (show i),"_",device_id,".jpg"])) (L.toStrict content)
     hPutStrLn f (U8.toString (S.concat [device_id," "]))
-    hFlush f ) [1..10]
+    hFlush f ) [1..20]
   hClose f
 
 sendRequest :: IO ()
@@ -35,7 +35,7 @@ sendRequest = do
         let opts = defaults & header "Cookie" .~ [U8.fromString $ "device_id=" ++ deviceId]
         resp <- getWith opts $ "http://bus.kuaizhan.com/bus/1.0/apps/55d45b2dde0f01bf5ba98dcf/env/pro/funcs/sohu_multivote?site_id=3755165334&data=58213bccbeacc01b73dfa6a2&uid=weNpJVmk&code=" ++ code
         putStrLn $ show $ resp ^. responseBody
-        threadDelay 200
+        threadDelay 100
 
 go :: String -> IO ()
 go s = do 
@@ -46,9 +46,9 @@ go s = do
         let opts = defaults & header "Cookie" .~ [U8.fromString $ "device_id=" ++ deviceId]
         resp <- getWith opts $ "http://bus.kuaizhan.com/bus/1.0/apps/55d45b2dde0f01bf5ba98dcf/env/pro/funcs/sohu_multivote?site_id=3755165334&data=58213bccbeacc01b73dfa6a2&uid=weNpJVmk&code=" ++ code
         putStrLn $ show $ resp ^. responseBody
-        threadDelay 200
+        threadDelay 100
 
 s = do
   s <- readFile "/Users/mgh/imgs/codes.txt"
-  mapM_ (\_-> go s) [1..150]
+  mapM_ (\_-> go s) [1..180]
 
