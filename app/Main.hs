@@ -12,7 +12,8 @@ import Control.Monad (replicateM_)
 
 import System.IO
 import Control.Concurrent(threadDelay)
-
+import Control.Exception as E
+import Network.HTTP.Client(HttpException( StatusCodeException ))
 main :: IO ()
 main = do
   f <- openFile "/Users/mgh/imgs/codes.txt" WriteMode
@@ -43,11 +44,11 @@ go s = do
     where
       toTuple x = map (\l -> (l!!0,l!!1))  $ map words $ lines x
       sendOne (deviceId,code) = do
-        let opts = defaults & header "Cookie" .~ [U8.fromString $ "device_id=" ++ deviceId]
-        resp <- getWith opts $ "http://bus.kuaizhan.com/bus/1.0/apps/55d45b2dde0f01bf5ba98dcf/env/pro/funcs/sohu_multivote?site_id=3755165334&data=58213bccbeacc01b73dfa6a2&uid=weNpJVmk&code=" ++ code
+        resp <- (getWith opts $ "http://bus.kuaizhan.com/bus/1.0/apps/55d45b2dde0f01bf5ba98dcf/env/pro/funcs/sohu_multivote?site_id=3755165334&data=58213bccbeacc01b73dfa6a2&uid=weNpJVmk&code=" ++ code) `E.catch` handler
         putStrLn $ show $ resp ^. responseBody
         threadDelay 100
-
+        where handler (StatusCodeException s _ _) = getWith opts $ "http://bus.kuaizhan.com/bus/1.0/apps/55d45b2dde0f01bf5ba98dcf/env/pro/funcs/sohu_multivote?site_id=3755165334&data=58213bccbeacc01b73dfa6a2&uid=weNpJVmk&code=" ++ code
+              opts = defaults & header "Cookie" .~ [U8.fromString $ "device_id=" ++ deviceId]
 s = do
   s <- readFile "/Users/mgh/imgs/codes.txt"
   mapM_ (\_-> go s) [1..180]

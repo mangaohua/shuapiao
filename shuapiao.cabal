@@ -30,6 +30,7 @@ executable shuapiao-exe
                      , bytestring
                      , utf8-string
                      , unix
+                     , http-client
   default-language:    Haskell2010
 
 test-suite shuapiao-test
