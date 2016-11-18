@@ -34,7 +34,7 @@ sendRequest = do
       sendOne (deviceId,code) = do
         let opts = defaults & header "Cookie" .~ [U8.fromString $ "device_id=" ++ deviceId]
         resp <- getWith opts $ "http://bus.kuaizhan.com/bus/1.0/apps/55d45b2dde0f01bf5ba98dcf/env/pro/funcs/sohu_multivote?site_id=3755165334&data=58213bccbeacc01b73dfa6a2&uid=weNpJVmk&code=" ++ code
-        putStrLn $ show $ resp ^. responseBody
+        putStrLn $ ((show $ resp ^. responseBody) ++ deviceId)
         threadDelay 100
 
 go :: String -> IO ()
